@@ -5,7 +5,7 @@
 
 // 线程安全的懒汉单例模式
 ConnectionPool* ConnectionPool::getConnectionPool() {
-	static ConnectionPool pool; // lock and unlock
+	static ConnectionPool pool; // C++11 中静态变量自动lock and unlock
 	return &pool;
 }
 
@@ -127,7 +127,7 @@ void ConnectionPool::scannerConnectionTask() {
 		unique_lock<mutex> lock(_queueMutex);
 		while (_connectionCnt > _initSize) {
 			Connection* p = _connectionQue.front();
-			if (p->getAliveeTime() >= _maxIdleTime * 1000) {
+			if (p->getAliveTime() >= _maxIdleTime * 1000) {
 				_connectionQue.pop();
 				_connectionCnt--;
 				delete p;
